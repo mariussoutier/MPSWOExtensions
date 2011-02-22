@@ -1,0 +1,8 @@
+<wo:if condition="$eoList.@count">
+	<ul class="LinkToEditRelationshipObjectList">
+		<wo:repetition list="$eoList" item="$listItem">
+			<li class="LinkToEditRelationshipObjectListItem"><wo:hyperlink action="$editAction" string="$itemDisplayValue" /></li>
+		</wo:repetition>
+	</ul>
+</wo:if>
+<wo:else><wo:str value="$valueWhenEmpty" escapeHTML="$false" /></wo:else>
