@@ -1,6 +1,5 @@
 <project name="MPSWOExtensions" default="build" basedir=".">
-	<target name="build" depends="init.build,build.woframework,javaclient,package" />
-
+	<target name="build" depends="init.build,build.woframework" />
 	<target name="install" depends="init.install,build.woframework,javaclient" />
 
 	<target name="clean" depends="init.properties">
@@ -27,6 +26,38 @@
 		<property name="wo.install.root" value="${wo.local.frameworks}" />
 		<property name="build.framework.name" value="${project.name}" />
 		<property name="build.framework.name.lowercase" value="${project.name.lowercase}" />
+		
+		<property name="scala.home" value="/Developer/Scala/scala-2.8.1.final" />
+		<property name="scala-library-jar" value="${scala.home}/lib/scala-library.jar" />
+		
+		<path id="build.classpath">
+			<pathelement location="${scala-library-jar}" />
+			
+			<!-- TODO Parse .scala_dependencies -->
+			<pathelement location="${wo.local.frameworks}/ERExtensions.framework/Resources/Java/ERExtensions.jar" />
+			<pathelement location="${wo.local.frameworks}/ERJars.framework/Resources/Java/ERFoundation.jar" />
+			<pathelement location="${wo.local.frameworks}/ERJars.framework/Resources/Java/ERJars.jar" />
+			<pathelement location="${wo.local.frameworks}/ERJars.framework/Resources/Java/ERWebObjects.jar" />
+			
+			<pathelement location="${wo.system.frameworks}/JavaWebObjects.framework/Resources/Java/javawebobjects.jar" />
+			<pathelement location="${wo.system.frameworks}/JavaEOAccess.framework/Resources/Java/javaeoaccess.jar" />
+			<pathelement location="${wo.system.frameworks}/JavaEOControl.framework/Resources/Java/javaeocontrol.jar" />
+			<pathelement location="${wo.system.frameworks}/JavaFoundation.framework/Resources/Java/javafoundation.jar" />
+			<pathelement location="${wo.system.frameworks}/JavaEOProject.framework/Resources/Java/javaeoproject.jar" />
+	
+			<pathelement location="bin" />
+			
+			<fileset dir="Libraries">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+
+		<taskdef resource="scala/tools/ant/antlib.xml">
+			<classpath>
+				<pathelement location="${scala.home}/lib/scala-compiler.jar" />
+				<pathelement location="${scala-library-jar}" />
+			</classpath>
+		</taskdef>
 	</target>
 
 	<!-- basic initializations  -->
@@ -54,7 +85,9 @@
 	<target name="build.woframework" depends="compile">
 		<taskdef name="woframework" classname="org.objectstyle.woproject.ant.WOFramework"/>
 
-		<woframework name="${build.framework.name}" destDir="${dest.dir}" customInfoPListContent="${customInfoPListContent}" principalClass="${principalClass}" eoAdaptorClassName="${eoAdaptorClassName}" javaVersion="${javaVersion}" cfbundleversion="${cfBundleVersion}" cfbundleshortversion="${cfBundleShortVersion}" cfbundleID="${cfBundleID}">
+		<woframework name="${build.framework.name}" destDir="${dest.dir}" customInfoPListContent="${customInfoPListContent}" 
+				principalClass="${principalClass}" eoAdaptorClassName="${eoAdaptorClassName}" javaVersion="${javaVersion}"
+				cfbundleversion="${cfBundleVersion}" cfbundleshortversion="${cfBundleShortVersion}" cfbundleID="${cfBundleID}">
 			<classes dir="${classes.dir}">
 				<includesfile name="woproject/classes.include.patternset" />
 				<excludesfile name="woproject/classes.exclude.patternset" />
@@ -87,7 +120,12 @@
 		<taskdef name="wocompile" classname="org.objectstyle.woproject.ant.WOCompile" />
 
 		<mkdir dir="bin" />
-		<wocompile srcdir="Sources" destdir="bin">
+		
+		<scalac srcdir="Sources" destdir="bin" classpathref="build.classpath">
+		    <include name="**/*.scala" />
+		</scalac>
+		
+		<wocompile srcdir="Sources" destdir="bin" source="1.5" target="1.5">
 			<frameworks root="ProjectLocal" embed="false" eclipse="true" />
 			<frameworks root="External" embed="false" eclipse="true" />
 			<frameworks root="Local" embed="false" eclipse="true" />
@@ -96,9 +134,6 @@
 			<frameworks root="Network" embed="false" eclipse="true" />
 			<classpath>
 				<fileset dir="Libraries">
-					<include name="*.jar" />
-				</fileset>
-				<fileset dir="${wo.extensions}">
 					<include name="*.jar" />
 				</fileset>
 			</classpath>
