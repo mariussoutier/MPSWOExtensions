@@ -39,6 +39,8 @@
 			<pathelement location="${wo.local.frameworks}/ERJars.framework/Resources/Java/ERJars.jar" />
 			<pathelement location="${wo.local.frameworks}/ERJars.framework/Resources/Java/ERWebObjects.jar" />
 			
+			<pathelement location="${wo.local.frameworks}/ERJavaMail.framework/Resources/Java/ERJavaMail.jar" />
+			
 			<pathelement location="${wo.system.frameworks}/JavaWebObjects.framework/Resources/Java/javawebobjects.jar" />
 			<pathelement location="${wo.system.frameworks}/JavaEOAccess.framework/Resources/Java/javaeoaccess.jar" />
 			<pathelement location="${wo.system.frameworks}/JavaEOControl.framework/Resources/Java/javaeocontrol.jar" />
